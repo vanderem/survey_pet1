@@ -42,6 +42,39 @@
               .grid4 { grid-template-columns: 1fr; }
               .row { grid-template-columns: 1fr; }
         }
+
+        /* Escala 1–5 com radios inline */
+        .scale-legend { display: flex; justify-content: space-between; font-size: .9rem; color: #6b7280; margin-bottom: 6px; }
+
+        .radios-inline { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 10px; }
+
+        /* Estrutura pill para permitir estado :checked bem estilizado */
+        .radios-inline label.pill { position: relative; display: block; cursor: pointer; }
+        .radios-inline label.pill input { position: absolute; inset: 0; width: 0; height: 0; opacity: 0; }
+
+        .radios-inline label.pill span {
+            display: block; text-align: center; padding: 10px 0;
+            border: 1px solid #e5e7eb; border-radius: 10px; font-weight: 600; user-select: none;
+        }
+
+        .radios-inline label.pill input:checked + span {
+            background: linear-gradient(90deg, #4338ca, #6366f1);
+            color: #fff; border-color: transparent;
+        }
+
+        .radios-inline label.pill input:focus-visible + span {
+            outline: 2px solid #4338ca; outline-offset: 2px;
+        }
+
+        /* Ranking drag-and-drop */
+        .rank-list { display: grid; gap: 10px; margin-top: 10px; }
+        .rank-item { display: grid; grid-template-columns: 32px 1fr auto; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid #e5e7eb; border-radius: 12px; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,.04); }
+        .rank-item .handle { font-size: 18px; color: #6b7280; cursor: grab; user-select: none; }
+        .rank-item .title { font-weight: 600; color: #111827; }
+        .rank-item .badge { min-width: 34px; height: 28px; display: grid; place-items: center; border-radius: 999px; background: #eef2ff; color: #4338ca; font-weight: 700; }
+        .rank-item.dragging { opacity: .6; background: #f9fafb; }
+        .rank-item.placeholder { border: 2px dashed #c7d2fe; background: #eef2ff55; }
+
       </style>
 </head>
 <body>
@@ -108,60 +141,63 @@
         <!-- 5. Ranking de desafios (1 = mais prioritário) -->
         <div class="field question hidden" data-step="4">
           <label>Qual destes desafios é o prioritário na gestão do seu pet? (1 = mais prioritário, 4 = menos) <span class="required">*</span></label>
-          <div class="grid4">
-            <div>
-              <div class="hint">Esquecer horários de medicação/reforços (Saúde)</div>
-              <select name="rank_saude" required>
-                <option value="">Selecione…</option>
-                <option>1</option><option>2</option><option>3</option><option>4</option>
-              </select>
+
+          <div class="hint">Arraste para ordenar (topo = 1, baixo = 4). Vamos salvar a posição como 1, 2, 3, 4.</div>
+
+          <div class="rank-list" id="rankList">
+            <div class="rank-item" draggable="true" data-name="rank_saude">
+              <span class="handle" aria-hidden="true">↕</span>
+              <div class="title">Esquecer horários de medicação/reforços (Saúde)</div>
+              <div class="badge"><span class="rank-pos">1</span></div>
+              <input type="hidden" name="rank_saude" value="1" required>
             </div>
-            <div>
-              <div class="hint">Perder documentos ou não tê-los em mãos</div>
-              <select name="rank_documentos" required>
-                <option value="">Selecione…</option>
-                <option>1</option><option>2</option><option>3</option><option>4</option>
-              </select>
+            <div class="rank-item" draggable="true" data-name="rank_documentos">
+              <span class="handle" aria-hidden="true">↕</span>
+              <div class="title">Perder documentos ou não tê-los em mãos</div>
+              <div class="badge"><span class="rank-pos">2</span></div>
+              <input type="hidden" name="rank_documentos" value="2" required>
             </div>
-            <div>
-              <div class="hint">Dificuldade em controlar a dieta e o peso</div>
-              <select name="rank_dieta" required>
-                <option value="">Selecione…</option>
-                <option>1</option><option>2</option><option>3</option><option>4</option>
-              </select>
+            <div class="rank-item" draggable="true" data-name="rank_dieta">
+              <span class="handle" aria-hidden="true">↕</span>
+              <div class="title">Dificuldade em controlar a dieta e o peso</div>
+              <div class="badge"><span class="rank-pos">3</span></div>
+              <input type="hidden" name="rank_dieta" value="3" required>
             </div>
-            <div>
-              <div class="hint">Falta de segurança sobre paradeiro/bem-estar</div>
-              <select name="rank_seguranca" required>
-                <option value="">Selecione…</option>
-                <option>1</option><option>2</option><option>3</option><option>4</option>
-              </select>
+            <div class="rank-item" draggable="true" data-name="rank_seguranca">
+              <span class="handle" aria-hidden="true">↕</span>
+              <div class="title">Falta de segurança sobre paradeiro/bem-estar</div>
+              <div class="badge"><span class="rank-pos">4</span></div>
+              <input type="hidden" name="rank_seguranca" value="4" required>
             </div>
           </div>
-          <div class="hint">(Opcional) Evite repetir posições — se repetir, ainda assim registramos no preview.</div>
+
+          <div class="hint">(Opcional) Se mudar de ideia, basta arrastar novamente.</div>
         </div>
 
-        <!-- 6. e 7. Escalas 1–5 -->
+        <!-- 6. Escala 1–5: Prontuário (radios inline) -->
         <div class="field question hidden" data-step="5">
-          <label>De 1 a 5, quão importante é ter um Prontuário Veterinário Digital centralizado? <span class="required">*</span></label>
-          <div class="radios">
-            <label><input type="radio" name="prontuario_importancia" value="1" required> 1</label>
-            <label><input type="radio" name="prontuario_importancia" value="2"> 2</label>
-            <label><input type="radio" name="prontuario_importancia" value="3"> 3</label>
-            <label><input type="radio" name="prontuario_importancia" value="4"> 4</label>
-            <label><input type="radio" name="prontuario_importancia" value="5"> 5</label>
-          </div>
+              <label>De 1 a 5, quão importante é ter um Prontuário Veterinário Digital centralizado? <span class="required">*</span></label>
+              <div class="scale-legend"><span>Nada importante</span><span>Extremamente importante</span></div>
+              <div class="radios-inline">
+                  <label class="pill"><input type="radio" name="prontuario_importancia" value="1" required><span>1</span></label>
+                  <label class="pill"><input type="radio" name="prontuario_importancia" value="2"><span>2</span></label>
+                  <label class="pill"><input type="radio" name="prontuario_importancia" value="3"><span>3</span></label>
+                  <label class="pill"><input type="radio" name="prontuario_importancia" value="4"><span>4</span></label>
+                  <label class="pill"><input type="radio" name="prontuario_importancia" value="5"><span>5</span></label>
+              </div>
         </div>
 
+        <!-- 7. Escala 1–5: Lembrete (radios inline) -->
         <div class="field question hidden" data-step="6">
-          <label>De 1 a 5, quão útil seria um lembrete automático (notificação) para saúde? <span class="required">*</span></label>
-          <div class="radios">
-            <label><input type="radio" name="lembrete_utilidade" value="1" required> 1</label>
-            <label><input type="radio" name="lembrete_utilidade" value="2"> 2</label>
-            <label><input type="radio" name="lembrete_utilidade" value="3"> 3</label>
-            <label><input type="radio" name="lembrete_utilidade" value="4"> 4</label>
-            <label><input type="radio" name="lembrete_utilidade" value="5"> 5</label>
-          </div>
+              <label>De 1 a 5, quão útil seria um lembrete automático (notificação) para saúde? <span class="required">*</span></label>
+              <div class="scale-legend"><span>Nada útil</span><span>Extremamente útil</span></div>
+              <div class="radios-inline">
+                  <label class="pill"><input type="radio" name="lembrete_utilidade" value="1" required><span>1</span></label>
+                  <label class="pill"><input type="radio" name="lembrete_utilidade" value="2"><span>2</span></label>
+                  <label class="pill"><input type="radio" name="lembrete_utilidade" value="3"><span>3</span></label>
+                  <label class="pill"><input type="radio" name="lembrete_utilidade" value="4"><span>4</span></label>
+                  <label class="pill"><input type="radio" name="lembrete_utilidade" value="5"><span>5</span></label>
+              </div>
         </div>
 
         <!-- 8. Upload de docs (intenção) -->
@@ -371,6 +407,73 @@
                       input.setCustomValidity('');
                     }
               }
+
+          // Atualiza visualização do valor dos sliders (1–5)
+          document.querySelectorAll('input[type="range"][data-show-value]').forEach(range => {
+              const output = range.parentElement.querySelector('output');
+              const update = () => { output.value = range.value; };
+              range.addEventListener('input', update);
+              update(); // inicial
+          });
+
+      // Ranking (drag-and-drop) — atualiza inputs hidden com posições 1..N
+      (function initRankList(){
+        const list = document.getElementById('rankList');
+        if (!list) return;
+
+        let draggingEl = null;
+
+        const updateRanks = () => {
+          Array.from(list.children).forEach((item, idx) => {
+            const pos = idx + 1;
+            const badge = item.querySelector('.rank-pos');
+            const input = item.querySelector('input[type="hidden"]');
+            if (badge) badge.textContent = String(pos);
+            if (input) input.value = String(pos);
+          });
+        };
+
+        const getDragAfterElement = (container, y) => {
+          const els = [...container.querySelectorAll('.rank-item:not(.dragging)')];
+          return els.reduce((closest, child) => {
+            const box = child.getBoundingClientRect();
+            const offset = y - box.top - box.height / 2;
+            if (offset < 0 && offset > closest.offset) {
+              return { offset, element: child };
+            } else {
+              return closest;
+            }
+          }, { offset: Number.NEGATIVE_INFINITY }).element;
+        };
+
+        list.addEventListener('dragstart', (e) => {
+          const target = e.target.closest('.rank-item');
+          if (!target) return;
+          draggingEl = target;
+          target.classList.add('dragging');
+        });
+
+        list.addEventListener('dragend', (e) => {
+          const target = e.target.closest('.rank-item');
+          if (target) target.classList.remove('dragging');
+          draggingEl = null;
+          updateRanks();
+        });
+
+        list.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          const afterElement = getDragAfterElement(list, e.clientY);
+          const dragging = list.querySelector('.dragging');
+          if (!dragging) return;
+          if (afterElement == null) {
+            list.appendChild(dragging);
+          } else {
+            list.insertBefore(dragging, afterElement);
+          }
+        });
+
+        updateRanks();
+      })();
 
       ['gestao_cuidado', 'usa_app_geral', 'valor_assinatura'].forEach(n => {
             document.querySelectorAll(`[name="${n}"]`).forEach(el => el.addEventListener('change', () => toggleOutro(n, `${n}_outro`)));
