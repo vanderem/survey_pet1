@@ -1,0 +1,64 @@
+:root { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, sans-serif; }
+body { margin: 0; background: #f6f7fb; }
+.container { max-width: 820px; margin: 40px auto; padding: 24px; background: #fff; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,.06); }
+h1 { margin-top: 0; font-size: 1.8rem; }
+.field { margin: 24px 0; }
+.field:first-of-type { margin-top: 0; }
+label { display: block; font-weight: 600; margin-bottom: 10px; }
+input[type="text"], input[type="email"], input[type="number"], select, textarea {
+    width: 100%; padding: 12px; border: 1px solid #e5e7eb; border-radius: 10px; box-sizing: border-box;
+}
+.hint { font-size: .9rem; color: #6b7280; margin-top: 6px; line-height: 1.4; }
+textarea { min-height: 120px; }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.grid4 { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 16px; }
+.checkboxes, .radios { display: flex; flex-direction: column; gap: 12px; }
+.checkboxes label, .radios label { display: flex; align-items: center; gap: 10px; margin: 0; font-weight: 500; }
+.checkboxes input, .radios input { margin: 0; }
+.actions { margin-top: 32px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+button { padding: 12px 20px; border: 0; border-radius: 10px; cursor: pointer; font-weight: 600; transition: transform .15s ease, box-shadow .15s ease; }
+button:focus-visible { outline: 2px solid #4338ca; outline-offset: 2px; }
+button:active { transform: translateY(1px); }
+.primary { background: #111827; color: #fff; }
+.ghost { background: #eef2ff; color: #111827; }
+.note { font-size: .95rem; color: #6b7280; line-height: 1.6; }
+.required { color: #ef4444; }
+pre { background: #0b1020; color: #c9e5ff; padding: 14px; border-radius: 12px; overflow: auto; font-size: .95rem; }
+.progress { margin: 24px 0 32px; }
+.progress-track { height: 10px; background: #e5e7eb; border-radius: 999px; overflow: hidden; }
+.progress-bar { height: 100%; width: 0; background: linear-gradient(90deg, #4338ca, #6366f1); transition: width .3s ease; }
+.progress-text { margin-top: 10px; font-size: .95rem; color: #4b5563; font-weight: 600; }
+.field.hidden { display: none; }
+#submitBtn { display: none; }
+
+@media (max-width: 640px) {
+    .container { margin: 20px auto; padding: 20px; border-radius: 12px; }
+    .grid4 { grid-template-columns: 1fr; }
+    .row { grid-template-columns: 1fr; }
+}
+
+/* Escala 1–5 com radios inline */
+.scale-legend { display: flex; justify-content: space-between; font-size: .9rem; color: #6b7280; margin-bottom: 6px; }
+.radios-inline { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 10px; }
+.radios-inline label.pill { position: relative; display: block; cursor: pointer; }
+.radios-inline label.pill input { position: absolute; inset: 0; width: 0; height: 0; opacity: 0; }
+.radios-inline label.pill span {
+    display: block; text-align: center; padding: 10px 0;
+    border: 1px solid #e5e7eb; border-radius: 10px; font-weight: 600; user-select: none;
+}
+.radios-inline label.pill input:checked + span {
+    background: linear-gradient(90deg, #4338ca, #6366f1);
+    color: #fff; border-color: transparent;
+}
+.radios-inline label.pill input:focus-visible + span {
+    outline: 2px solid #4338ca; outline-offset: 2px;
+}
+
+/* Ranking drag-and-drop */
+.rank-list { display: grid; gap: 10px; margin-top: 10px; }
+.rank-item { display: grid; grid-template-columns: 32px 1fr auto; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid #e5e7eb; border-radius: 12px; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,.04); }
+.rank-item .handle { font-size: 18px; color: #6b7280; cursor: grab; user-select: none; }
+.rank-item .title { font-weight: 600; color: #111827; }
+.rank-item .badge { min-width: 34px; height: 28px; display: grid; place-items: center; border-radius: 999px; background: #eef2ff; color: #4338ca; font-weight: 700; }
+.rank-item.dragging { opacity: .6; background: #f9fafb; }
+.rank-item.placeholder { border: 2px dashed #c7d2fe; background: #eef2ff55; }
