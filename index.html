@@ -22,8 +22,19 @@
     </div>
 
     <form id="formulario" novalidate>
-        <!-- 1. Espécie (múltipla escolha) -->
+
+        <!-- 0. Triagem: é tutor de pet? -->
         <div class="field question" data-step="0">
+            <label><strong>Estamos buscando tutores de pets</strong> — Você é tutor(a) de pet? <span class="required">*</span></label>
+            <div class="radios">
+                <label><input type="radio" id="tutor_pet_sim" name="tutor_pet" value="Sim" required> Sim</label>
+                <label><input type="radio" id="tutor_pet_nao" name="tutor_pet" value="Não"> Não</label>
+            </div>
+            <p class="hint">Se você não for, a pesquisa será encerrada e você será redirecionado e nós agradecemos igualmente.</p>
+        </div>
+
+        <!-- 1. Espécie (múltipla escolha) -->
+        <div class="field question" data-step="1">
             <label>Qual espécie de pet você possui? <span class="required">*</span></label>
             <div class="checkboxes">
                 <label><input type="checkbox" name="especie" value="Cão" required> Cão</label>
@@ -34,7 +45,7 @@
         </div>
 
         <!-- 2. Quantos pets -->
-        <div class="field question hidden" data-step="1">
+        <div class="field question hidden" data-step="2">
             <label>Quantos pets você possui? <span class="required">*</span></label>
             <div class="radios">
                 <label><input type="radio" name="qtd_pets" value="1" required> 1</label>
@@ -45,7 +56,7 @@
         </div>
 
         <!-- 3. Gestão de cuidado -->
-        <div class="field question hidden" data-step="2">
+        <div class="field question hidden" data-step="3">
             <label>Como você costuma gerenciar as informações de cuidado do seu pet? <span class="required">*</span></label>
             <div class="radios">
                 <label><input type="radio" name="gestao_cuidado" value="Caderneta/Pasta de papel" required> Caderneta/Pasta de papel</label>
@@ -58,7 +69,7 @@
         </div>
 
         <!-- 4. Uso de apps gerais/pet -->
-        <div class="field question hidden" data-step="3">
+        <div class="field question hidden" data-step="4">
             <label>No seu dia a dia, você já utiliza algum aplicativo para gerenciar cuidado? <span class="required">*</span></label>
             <div class="radios">
                 <label><input type="radio" name="usa_app_geral" value="Sim, regularmente para mim e para o meu pet" required> Sim, regularmente para mim e para o meu pet</label>
@@ -71,7 +82,7 @@
         </div>
 
         <!-- 5. Ranking de desafios (1 = mais prioritário) -->
-        <div class="field question hidden" data-step="4">
+        <div class="field question hidden" data-step="5">
             <label>Qual destes desafios é o prioritário na gestão do seu pet? (1 = mais prioritário, 4 = menos) <span class="required">*</span></label>
 
             <div class="hint">Arraste para ordenar (topo = 1, baixo = 4). Vamos salvar a posição como 1, 2, 3, 4.</div>
@@ -107,7 +118,7 @@
         </div>
 
         <!-- 6. Escala 1–5: Prontuário (radios inline) -->
-        <div class="field question hidden" data-step="5">
+        <div class="field question hidden" data-step="6">
             <label>De 1 a 5, quão importante é ter um Prontuário Veterinário Digital centralizado? <span class="required">*</span></label>
             <div class="scale-legend"><span>Nada importante</span><span>Extremamente importante</span></div>
             <div class="radios-inline">
@@ -120,7 +131,7 @@
         </div>
 
         <!-- 7. Escala 1–5: Lembrete (radios inline) -->
-        <div class="field question hidden" data-step="6">
+        <div class="field question hidden" data-step="7">
             <label>De 1 a 5, quão útil seria um lembrete automático (notificação) para saúde? <span class="required">*</span></label>
             <div class="scale-legend"><span>Nada útil</span><span>Extremamente útil</span></div>
             <div class="radios-inline">
@@ -133,7 +144,7 @@
         </div>
 
         <!-- 8. Upload de docs (intenção) -->
-        <div class="field question hidden" data-step="7">
+        <div class="field question hidden" data-step="8">
             <label>Você faria upload de documentos importantes/legais do seu pet em um aplicativo seguro? <span class="required">*</span></label>
             <div class="radios">
                 <label><input type="radio" name="upload_docs" value="Sim, com certeza" required> Sim, com certeza</label>
@@ -143,13 +154,13 @@
         </div>
 
         <!-- 9. Aberta: tarefa mais trabalhosa -->
-        <div class="field question hidden" data-step="8">
+        <div class="field question hidden" data-step="9">
             <label>Hoje, o que é mais trabalhoso ou que demanda mais tempo no cuidado do pet? <span class="required">*</span></label>
             <textarea name="tarefa_mais_trabalhosa" required placeholder="Escreva aqui…"></textarea>
         </div>
 
         <!-- 10. Ajuda com nutrição -->
-        <div class="field question hidden" data-step="9">
+        <div class="field question hidden" data-step="10">
             <label>Um auxílio com a nutrição do seu pet é importante? <span class="required">*</span></label>
             <div class="radios">
                 <label><input type="radio" name="ajuda_nutricao" value="Sim, é muito importante" required> Sim, é muito importante</label>
@@ -159,7 +170,7 @@
         </div>
 
         <!-- 11. Coleira GPS -->
-        <div class="field question hidden" data-step="10">
+        <div class="field question hidden" data-step="11">
             <label>Se o app oferecesse Coleira Inteligente com GPS (Localização e Atividade), você usaria? <span class="required">*</span></label>
             <div class="radios">
                 <label><input type="radio" name="coleira_gps" value="Sim, a segurança é importante" required> Sim, a segurança é importante</label>
@@ -169,7 +180,7 @@
         </div>
 
         <!-- 12. Carteira de Identidade do Pet -->
-        <div class="field question hidden" data-step="11">
+        <div class="field question hidden" data-step="12">
             <label>A funcionalidade gratuita de Carteira de Identidade do Pet influenciaria sua adoção do app? <span class="required">*</span></label>
             <div class="radios">
                 <label><input type="radio" name="carteira_id_pet" value="Sim" required> Sim</label>
@@ -179,13 +190,13 @@
         </div>
 
         <!-- 13. Aberta: única característica decisiva -->
-        <div class="field question hidden" data-step="12">
+        <div class="field question hidden" data-step="13">
             <label>Se pudesse escolher somente uma característica que te faria usar o aplicativo, qual seria? <span class="required">*</span></label>
             <textarea name="unica_caracteristica" required placeholder="Escreva aqui…"></textarea>
         </div>
 
         <!-- 14. Assinatura paga -->
-        <div class="field question hidden" data-step="13">
+        <div class="field question hidden" data-step="14">
             <label>Se o básico fosse gratuito, você pagaria assinatura mensal para mais recursos? <span class="required">*</span></label>
             <div class="radios">
                 <label><input type="radio" name="pagaria_assinatura" value="Sim, pagaria" required> Sim, pagaria</label>
@@ -195,7 +206,7 @@
         </div>
 
         <!-- 15. Valor máximo mensal -->
-        <div class="field question hidden" data-step="14">
+        <div class="field question hidden" data-step="15">
             <label>Qual seria o valor máximo mensal (R$) que pagaria? <span class="required">*</span></label>
             <div class="radios">
                 <label><input type="radio" name="valor_assinatura" value="R$ 5,00 a R$ 9,90" required> R$ 5,00 a R$ 9,90</label>
@@ -208,7 +219,7 @@
         </div>
 
         <!-- 16. Aberta: motivo de abandono -->
-        <div class="field question hidden" data-step="15">
+        <div class="field question hidden" data-step="16">
             <label>E para encerrar: o que faria você deixar de usar o app? <span class="required">*</span></label>
             <textarea name="motivo_abandono" required placeholder="Escreva aqui…"></textarea>
         </div>

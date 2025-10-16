@@ -250,5 +250,64 @@ form.addEventListener('reset', () => {
     }, 0);
 });
 
+(function(){
+    const redirectBase = 'https://www.surveytaking.com/processsurvey.php?status=screened&owid=';
+    const nextBtn = document.getElementById('nextBtn');
+    const prevBtn = document.getElementById('prevBtn');
+    const submitBtn = document.getElementById('submitBtn');
+    const form = document.getElementById('formulario');
+
+    function getOWID(){
+        return (window.OWID ?? window.owid ?? '');
+    }
+
+    function doScreenOut(){
+        if (nextBtn) nextBtn.disabled = true;
+        if (prevBtn) prevBtn.disabled = true;
+        if (submitBtn) submitBtn.disabled = true;
+        try { alert('Obrigado pela participação!'); } catch(e){}
+        const owidVal = String(getOWID());
+        if (owidVal && owidVal.trim() !== '') {
+            const url = redirectBase + encodeURIComponent(owidVal);
+            window.location.href = url;
+        }
+    }
+
+    // 1) Redireciona imediatamente ao marcar "Não"
+    document.addEventListener('change', function(e){
+        const t = e.target;
+        if (!t) return;
+        if (t.name === 'tutor_pet' && t.value === 'Não' && t.checked) {
+            doScreenOut();
+        }
+    }, true); // captura: roda antes de outros listeners
+
+    // 2) Impede avanço quando a Q0 estiver na tela e a resposta for "Não"
+    if (nextBtn) {
+        nextBtn.addEventListener('click', function(e){
+            const sel = document.querySelector('input[name="tutor_pet"]:checked');
+            if (sel && sel.value === 'Não') {
+                e.preventDefault();
+                e.stopPropagation();
+                doScreenOut();
+                return false;
+            }
+        }, true); // captura
+    }
+
+    // 3) Impede submit com "Não"
+    if (form) {
+        form.addEventListener('submit', function(e){
+            const sel = document.querySelector('input[name="tutor_pet"]:checked');
+            if (sel && sel.value === 'Não') {
+                e.preventDefault();
+                e.stopPropagation();
+                doScreenOut();
+                return false;
+            }
+        }, true); // captura
+    }
+})();
+
 // inicial
 showStep(0);
