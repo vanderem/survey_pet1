@@ -265,11 +265,13 @@ form.addEventListener('reset', () => {
         if (nextBtn) nextBtn.disabled = true;
         if (prevBtn) prevBtn.disabled = true;
         if (submitBtn) submitBtn.disabled = true;
-        try { alert('Obrigado pela participação!'); } catch(e){}
         const owidVal = String(getOWID());
         if (owidVal && owidVal.trim() !== '') {
+            try { alert('Obrigado pela participação!'); } catch(e){}
             const url = redirectBase + encodeURIComponent(owidVal);
             window.location.href = url;
+        } else {
+            try { alert('Obrigado pela participação!'); } catch(e){}
         }
     }
 
