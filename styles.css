@@ -56,9 +56,42 @@ pre { background: #0b1020; color: #c9e5ff; padding: 14px; border-radius: 12px; o
 
 /* Ranking drag-and-drop */
 .rank-list { display: grid; gap: 10px; margin-top: 10px; }
-.rank-item { display: grid; grid-template-columns: 32px 1fr auto; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid #e5e7eb; border-radius: 12px; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,.04); }
+.rank-item {
+    display: grid;
+    grid-template-columns: 32px 1fr auto auto; /* <- novo */
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,.04);
+}
 .rank-item .handle { font-size: 18px; color: #6b7280; cursor: grab; user-select: none; }
 .rank-item .title { font-weight: 600; color: #111827; }
 .rank-item .badge { min-width: 34px; height: 28px; display: grid; place-items: center; border-radius: 999px; background: #eef2ff; color: #4338ca; font-weight: 700; }
 .rank-item.dragging { opacity: .6; background: #f9fafb; }
 .rank-item.placeholder { border: 2px dashed #c7d2fe; background: #eef2ff55; }
+
+/* Controles alternativos de ranking (setas + teclado) */
+.rank-arrows { display: flex; gap: 6px; align-items: center; }
+.rank-arrows .rank-up,
+.rank-arrows .rank-down {
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    border-radius: 8px;
+    padding: 6px 8px;
+    cursor: pointer;
+    font-weight: 700;
+    line-height: 1;
+}
+.rank-arrows .rank-up:focus-visible,
+.rank-arrows .rank-down:focus-visible {
+    outline: 2px solid #4338ca;
+    outline-offset: 2px;
+}
+
+/* No mobile, escondemos as setas porque o arraste já é ótimo */
+@media (max-width: 640px) {
+    .rank-arrows { display: none; }
+}

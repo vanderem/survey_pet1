@@ -104,43 +104,83 @@ function toggleOutro(name, inputId) {
     if (!checkedOutro) { input.value = ''; input.setCustomValidity(''); }
 }
 
-// Ranking (drag-and-drop) — compatível com mobile via SortableJS
-(function initRankList(){
-  const list = document.getElementById('rankList');
-  if (!list) return;
+// Ranking (drag-and-drop) robusto: desktop + mobile + teclado
+(function initRankList() {
+    const list = document.getElementById('rankList');
+    if (!list) return;
 
-  const applyRanks = () => {
-    Array.from(list.children).forEach((item, idx) => {
-      const pos = idx + 1;
-      const badge = item.querySelector('.rank-pos');
-      const input = item.querySelector('input[type="hidden"]');
-      if (badge) badge.textContent = String(pos);
-      if (input) input.value = String(pos);
-    });
-  };
+    const applyRanks = () => {
+        Array.from(list.children).forEach((item, idx) => {
+            const pos = idx + 1;
+            const badge = item.querySelector('.rank-pos');
+            const input = item.querySelector('input[type="hidden"]');
+            if (badge) badge.textContent = String(pos);
+            if (input) input.value = String(pos);
+        });
+    };
 
-  const initSortable = () => {
-    // Usa alça `.handle`, força fallback para toque em iOS/Android
-    new Sortable(list, {
-      animation: 150,
-      handle: '.handle',
-      ghostClass: 'dragging',
-      forceFallback: true,
-      onSort: applyRanks,
-      onEnd: applyRanks
-    });
-    applyRanks();
-  };
+    // Alternativa sem mouse: setas + teclado
+    const addControls = (item) => {
+        if (item.querySelector('.rank-arrows')) return;
+        const ctrls = document.createElement('div');
+        ctrls.className = 'rank-arrows';
+        ctrls.innerHTML = `
+      <button type="button" class="rank-up" aria-label="Mover para cima">↑</button>
+      <button type="button" class="rank-down" aria-label="Mover para baixo">↓</button>
+    `;
+        item.appendChild(ctrls);
 
-  if (window.Sortable) {
-    initSortable();
-  } else {
-    // Carrega SortableJS dinamicamente se não estiver presente
-    const s = document.createElement('script');
-    s.src = 'https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js';
-    s.onload = initSortable;
-    document.head.appendChild(s);
-  }
+        const moveUp = () => {
+            if (item.previousElementSibling) list.insertBefore(item, item.previousElementSibling);
+            applyRanks();
+        };
+        const moveDown = () => {
+            const next = item.nextElementSibling;
+            if (next) list.insertBefore(next, item);
+            applyRanks();
+        };
+
+        ctrls.querySelector('.rank-up').addEventListener('click', moveUp);
+        ctrls.querySelector('.rank-down').addEventListener('click', moveDown);
+
+        // Teclado
+        item.tabIndex = 0;
+        item.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowUp') { e.preventDefault(); moveUp(); }
+            if (e.key === 'ArrowDown') { e.preventDefault(); moveDown(); }
+        });
+    };
+
+    const bootstrap = () => {
+        // Inicializa SortableJS (melhor desktop + fallback no touch)
+        const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+        new Sortable(list, {
+            animation: 150,
+            handle: '.handle',
+            ghostClass: 'dragging',
+            forceFallback: isTouch,      // usa fallback só no touch; desktop fica DnD nativo
+            fallbackTolerance: 8,        // reduz cliques acidentais
+            delayOnTouchOnly: true,
+            delay: 120,                  // press-and-hold no mobile
+            swapThreshold: 0.65,
+            dragoverBubble: true,
+            onSort: applyRanks,
+            onEnd: applyRanks
+        });
+
+        Array.from(list.children).forEach(addControls);
+        applyRanks();
+    };
+
+    if (window.Sortable) {
+        bootstrap();
+    } else {
+        // Carrega SortableJS dinamicamente se não foi adicionado no index.html
+        const s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js';
+        s.onload = bootstrap;
+        document.head.appendChild(s);
+    }
 })();
 
 // listeners “Outro”
