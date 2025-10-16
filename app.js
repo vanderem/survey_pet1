@@ -8,6 +8,10 @@ const prevBtn = document.getElementById('prevBtn');
 const nextBtn = document.getElementById('nextBtn');
 const submitBtn = document.getElementById('submitBtn');
 
+const urlParams = new URLSearchParams(window.location.search);
+const owid = urlParams.get('owid');
+console.log('OWID recebido:', owid);
+
 let currentStep = 0;
 
 function updateProgress() {
@@ -100,53 +104,43 @@ function toggleOutro(name, inputId) {
     if (!checkedOutro) { input.value = ''; input.setCustomValidity(''); }
 }
 
-// Ranking (drag-and-drop) — atualiza inputs hidden com posições 1..N
+// Ranking (drag-and-drop) — compatível com mobile via SortableJS
 (function initRankList(){
-    const list = document.getElementById('rankList');
-    if (!list) return;
+  const list = document.getElementById('rankList');
+  if (!list) return;
 
-    const updateRanks = () => {
-        Array.from(list.children).forEach((item, idx) => {
-            const pos = idx + 1;
-            const badge = item.querySelector('.rank-pos');
-            const input = item.querySelector('input[type="hidden"]');
-            if (badge) badge.textContent = String(pos);
-            if (input) input.value = String(pos);
-        });
-    };
-
-    const getDragAfterElement = (container, y) => {
-        const els = [...container.querySelectorAll('.rank-item:not(.dragging)')];
-        return els.reduce((closest, child) => {
-            const box = child.getBoundingClientRect();
-            const offset = y - box.top - box.height / 2;
-            if (offset < 0 && offset > closest.offset) return { offset, element: child };
-            return closest;
-        }, { offset: Number.NEGATIVE_INFINITY }).element;
-    };
-
-    list.addEventListener('dragstart', (e) => {
-        const target = e.target.closest('.rank-item');
-        if (!target) return;
-        target.classList.add('dragging');
+  const applyRanks = () => {
+    Array.from(list.children).forEach((item, idx) => {
+      const pos = idx + 1;
+      const badge = item.querySelector('.rank-pos');
+      const input = item.querySelector('input[type="hidden"]');
+      if (badge) badge.textContent = String(pos);
+      if (input) input.value = String(pos);
     });
+  };
 
-    list.addEventListener('dragend', (e) => {
-        const target = e.target.closest('.rank-item');
-        if (target) target.classList.remove('dragging');
-        updateRanks();
+  const initSortable = () => {
+    // Usa alça `.handle`, força fallback para toque em iOS/Android
+    new Sortable(list, {
+      animation: 150,
+      handle: '.handle',
+      ghostClass: 'dragging',
+      forceFallback: true,
+      onSort: applyRanks,
+      onEnd: applyRanks
     });
+    applyRanks();
+  };
 
-    list.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        const afterElement = getDragAfterElement(list, e.clientY);
-        const dragging = list.querySelector('.dragging');
-        if (!dragging) return;
-        if (afterElement == null) list.appendChild(dragging);
-        else list.insertBefore(dragging, afterElement);
-    });
-
-    updateRanks();
+  if (window.Sortable) {
+    initSortable();
+  } else {
+    // Carrega SortableJS dinamicamente se não estiver presente
+    const s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js';
+    s.onload = initSortable;
+    document.head.appendChild(s);
+  }
 })();
 
 // listeners “Outro”
@@ -168,6 +162,11 @@ document.querySelectorAll('[name="especie"]').forEach(el => el.addEventListener(
 form.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (!validateStep(currentStep, true)) return;
+    // Desabilita botão de envio para evitar múltiplos cliques
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Enviando...';
+    }
 
     try {
         // Usa o mapeamento centralizado do sheets.js
@@ -178,11 +177,20 @@ form.addEventListener('submit', async (e) => {
         console.log('[Sheets] Envio concluído:', result);
         alert('Obrigado! Suas respostas foram registradas com sucesso.');
 
-        // Após envio, recarrega página em branco
-        // Em vez de resetar o formulário e voltar ao início:
-        window.location.href = 'about:blank';
+        // Redireciona para o painel com status=complete, devolvendo o OWID; se não houver OWID, usa página em branco
+        if (owid) {
+            const url = `https://www.surveytaking.com/processsurvey.php?status=complete&owid=${encodeURIComponent(owid)}`;
+            window.location.href = url;
+        } else {
+            window.location.href = 'about:blank';
+        }
     } catch (err) {
         console.error('[Sheets] Falha no envio:', err);
+        // Reabilita botão em caso de erro
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Finalizar Pesquisa';
+        }
         alert('Ocorreu um erro ao enviar suas respostas. Tente novamente.');
     }
 });
