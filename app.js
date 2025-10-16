@@ -251,7 +251,7 @@ form.addEventListener('reset', () => {
 });
 
 (function(){
-    const redirectBase = 'https://www.surveytaking.com/processsurvey.php?status=screened&owid=';
+    const redirectBase = `https://www.surveytaking.com/processsurvey.php?status=screened&owid=${encodeURIComponent(owid)}`;
     const nextBtn = document.getElementById('nextBtn');
     const prevBtn = document.getElementById('prevBtn');
     const submitBtn = document.getElementById('submitBtn');
@@ -266,12 +266,15 @@ form.addEventListener('reset', () => {
         if (prevBtn) prevBtn.disabled = true;
         if (submitBtn) submitBtn.disabled = true;
         const owidVal = String(getOWID());
-        if (owidVal && owidVal.trim() !== '') {
+        if (owid) {
             try { alert('Obrigado pela participação!'); } catch(e){}
-            const url = redirectBase + encodeURIComponent(owidVal);
+            const url = redirectBase;
             window.location.href = url;
         } else {
-            try { alert('Obrigado pela participação!'); } catch(e){}
+            try {
+                alert('Obrigado pela participação!');
+                window.location.href = 'about:blank';
+            } catch(e){}
         }
     }
 
